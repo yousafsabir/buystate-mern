@@ -20,8 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const userRoutes = require("./users/userRoutes");
+const propertyRoutes = require("./properties/propertyRoutes");
 
 app.use("/api/users/", userRoutes);
+app.use("/api/properties/", propertyRoutes);
 
 app.use(errorHandler);
 

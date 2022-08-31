@@ -5,32 +5,67 @@ const propertySchema = mongoose.Schema(
         title: {
             type: String,
             required: [true, "please add title"],
+            unique: false,
         },
         location: {
             type: String,
             required: [true, "please add location"],
+            unique: false,
+        },
+        description: {
+            type: String,
+            required: [true, "please add description"],
+            unique: false,
+        },
+        status: {
+            type: String,
+            required: [true, "please add status"],
+            unique: false,
         },
         type: {
             type: String,
             required: [true, "please add type"],
+            unique: false,
         },
-        size: {
-            type: String,
-            required: [true, "please add size"],
+        area: {
+            type: Number,
+            required: [true, "please add area"],
+            unique: false,
         },
-        finishType: {
-            type: String,
-            required: [true, "please add finish Type"],
-            unique: true,
+        beds: {
+            type: Number,
+            required: [true, "please add beds"],
+            unique: false,
         },
-        imgUrl: {
-            type: String,
-            required: [true, "please add your image"],
-            unique: true,
+        baths: {
+            type: Number,
+            required: [true, "please add baths"],
+            unique: false,
+        },
+        garages: {
+            type: Number,
+            required: [true, "please add garages"],
+            unique: false,
         },
         price: {
-            type: String,
+            type: Number,
             required: [true, "please add your price"],
+            unique: false,
+        },
+        image: {
+            type: String,
+            required: [true, "please add your image"],
+            unique: false,
+        },
+        imageId: {
+            type: String,
+            required: [true, "please add your image"],
+            unique: false,
+        },
+        userId: {
+            type: String,
+            required: [true, "please add your image"],
+            unique: false,
         },
     },
     {

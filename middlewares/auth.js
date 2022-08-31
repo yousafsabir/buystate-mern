@@ -7,7 +7,7 @@ const protect = async (req, res, next) => {
     try {
         let key = req.headers.authorization;
         if (!key) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: "not authorized, no token",
             });
         }
@@ -16,7 +16,7 @@ const protect = async (req, res, next) => {
         // verfying the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: "not authorized",
             });
         }
@@ -25,7 +25,7 @@ const protect = async (req, res, next) => {
         next();
     } catch (error) {
         console.log("auth error", error);
-        res.status(401).json({
+        return res.status(401).json({
             message: "not authorized",
         });
     }

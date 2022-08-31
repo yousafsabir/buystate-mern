@@ -11,41 +11,62 @@ const getProperties = asyncHandler(async (req, res) => {
     });
 });
 const createProperty = asyncHandler(async (req, res) => {
-    const { title, location, type, size, finishType, imgUrl, price } = req.body;
+    const {
+        title,
+        location,
+        description,
+        status,
+        type,
+        area,
+        beds,
+        baths,
+        garages,
+        price,
+        image,
+        imageId,
+        userId,
+    } = req.body;
 
     if (
         !title ||
         !location ||
+        !description ||
+        !status ||
         !type ||
-        !size ||
-        !finishType ||
-        !imgUrl ||
-        !price
+        !area ||
+        !beds ||
+        !baths ||
+        !garages ||
+        !price ||
+        !image ||
+        !imageId ||
+        !userId
     ) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "please include all fields",
         });
     }
 
     const property = await Property.create(req.body);
     if (property) {
-        res.status(201).json({
+        return res.status(201).json({
             status: 201,
             message: "property created successfully",
+            property,
         });
     }
 });
 const updateProperty = asyncHandler(async (req, res) => {
     const id = req.params.id;
     if (!id) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "id not found",
         });
     }
     const updatedOne = await Property.findByIdAndUpdate(id, req.body, {
         new: true,
     });
-    res.json({
+    return res.json({
         status: 200,
         message: "successfully updated",
         updatedOne,
@@ -54,12 +75,12 @@ const updateProperty = asyncHandler(async (req, res) => {
 const deleteProperty = asyncHandler(async (req, res) => {
     const id = req.params.id;
     if (!id) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "id not found",
         });
     }
     const deletedOne = await Property.findByIdAndDelete(id);
-    res.json({
+    return res.json({
         message: "successfully deleted",
         status: 200,
         deletedOne,

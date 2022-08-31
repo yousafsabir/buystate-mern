@@ -27,19 +27,21 @@ app.use("/api/properties/", propertyRoutes);
 
 app.use(errorHandler);
 
-// to serve frontend
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "./client/build")));
+// to serve frontend   UPDATE:frontend will be served on vercel
+// if (process.env.NODE_ENV === "production") {
+//     app.use(express.static(path.join(__dirname, "./client/build")));
 
-    app.get("*", (req, res) => {
-        res.sendFile(
-            path.resolve(__dirname, "./", "client", "build", "index.html")
-        );
-    });
-} else {
-    app.get("/", (req, res) => {
-        res.send("Please set to production");
-    });
-}
+//     app.get("*", (req, res) => {
+//         res.sendFile(
+//             path.resolve(__dirname, "./", "client", "build", "index.html")
+//         );
+//     });
+// } else {
+//     app.get("/", (req, res) => {
+//         res.send("Please set to production");
+//     });
+// }
+// Heroku Post build command
+// "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
 
 app.listen(port, () => console.log("App Started on port:", port));

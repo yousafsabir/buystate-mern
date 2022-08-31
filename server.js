@@ -27,6 +27,10 @@ app.use("/api/properties/", propertyRoutes);
 
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+    res.send("frontend deployed on https://buyestate.vercel.app");
+});
+
 // to serve frontend   UPDATE:frontend will be served on vercel
 // if (process.env.NODE_ENV === "production") {
 //     app.use(express.static(path.join(__dirname, "./client/build")));

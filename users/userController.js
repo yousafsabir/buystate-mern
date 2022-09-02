@@ -12,7 +12,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const { fName, lName, userName, phone, email, password } = req.body;
     // Check if we have all the values
     if (!fName || !lName || !userName || !phone || !email || !password) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "please include all fields",
         });
     }
@@ -20,7 +20,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "user Already exists",
         });
     }
@@ -52,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
             },
         });
     } else {
-        res.status(400).json({
+        return res.status(400).json({
             message: "Invalid user data",
         });
     }
@@ -64,14 +64,14 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { id, password } = req.body;
     if (empty(id) || empty(password)) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "please include all fields",
         });
     }
 
     const user = await User.findOne(id);
     if (!user) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "User doesn't exist",
         });
     }
@@ -79,7 +79,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const passMatch = await bcrypt.compare(password, user.password);
 
     if (passMatch) {
-        res.status(200).json({
+        return res.status(200).json({
             message: "user logged in",
             user: {
                 _id: user.id,
@@ -92,7 +92,7 @@ const loginUser = asyncHandler(async (req, res) => {
             },
         });
     } else {
-        res.status(400).json({
+        return res.status(400).json({
             message: "wrong password",
         });
     }
@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   Get /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-    res.json({
+    return res.json({
         status: 200,
         message: "user data sent successfully",
         user: req.user,

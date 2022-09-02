@@ -2,9 +2,18 @@ const asyncHandler = require("express-async-handler");
 const Property = require("./propertyModel");
 
 const getProperties = asyncHandler(async (req, res) => {
-    const properties = await Property.find();
+    const { find, sort, limit } = req.body;
+    let toSort;
+    if (sort === "ascending") {
+        toSort = { $natural: 1 };
+    } else if (sort === "descending") {
+        toSort = { $natural: -1 };
+    } else {
+        toSort = null;
+    }
+    const properties = await Property.find(find).sort(toSort).limit(limit);
 
-    res.status(200).json({
+    return res.status(200).json({
         status: 200,
         message: `successfully fetched properties`,
         properties,

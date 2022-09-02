@@ -8,7 +8,8 @@ const {
     deleteProperty,
 } = require("./propertyController");
 
-router.route("/").get(getProperties).post(protect, createProperty);
+router.route("/get").post(getProperties);
+router.route("/create").post(protect, createProperty);
 router
     .route("/:id")
     .put(protect, updateProperty)

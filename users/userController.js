@@ -62,23 +62,14 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-    const { idType, userId, password } = req.body;
-    if (!idType || !userId || !password) {
+    const { id, password } = req.body;
+    if (empty(id) || empty(password)) {
         res.status(400).json({
             message: "please include all fields",
         });
     }
-    // checking whether userId is phone, username or email
-    let search = {};
-    if (idType === "userName") {
-        search = { userName: userId };
-    } else if (idType === "phone") {
-        search = { phone: userId };
-    } else if (idType === "email") {
-        search = { email: userId };
-    }
 
-    const user = await User.findOne(search);
+    const user = await User.findOne(id);
     if (!user) {
         res.status(400).json({
             message: "User doesn't exist",

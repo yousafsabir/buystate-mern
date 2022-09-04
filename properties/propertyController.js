@@ -2,7 +2,9 @@ const asyncHandler = require("express-async-handler");
 const Property = require("./propertyModel");
 
 const getProperties = asyncHandler(async (req, res) => {
-    const { find, sort, limit } = req.body;
+    let { find, sort, page, limit } = req.body;
+    page = parseInt(page);
+    limit = parseInt(limit);
     let toSort;
     if (sort === "ascending") {
         toSort = { $natural: 1 };
@@ -11,11 +13,30 @@ const getProperties = asyncHandler(async (req, res) => {
     } else {
         toSort = null;
     }
-    const properties = await Property.find(find).sort(toSort).limit(limit);
+    // Pagination
+
+    let pagination = {
+        page,
+    };
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    if (startIndex > 0) {
+        pagination.previous = page - 1;
+    }
+    if (endIndex < (await Property.find(find).count())) {
+        pagination.next = page + 1;
+    }
+
+    const properties = await Property.find(find)
+        .sort(toSort)
+        .skip(startIndex)
+        .limit(limit);
 
     return res.status(200).json({
         status: 200,
         message: `successfully fetched properties`,
+        pagination,
         properties,
     });
 });

@@ -68,11 +68,29 @@ const loginUser = asyncHandler(async (req, res) => {
             message: "please include all fields",
         });
     }
+    let toFind;
 
-    const user = await User.findOne(id);
+    if (/@/g.test(id)) {
+        // if it contains @
+        toFind = {
+            email: id,
+        };
+    } else if (/^\d+$/g.test(id)) {
+        // if it only contains digits
+        toFind = {
+            phone: id,
+        };
+    } else {
+        toFind = {
+            userName: id,
+        };
+    }
+
+    const user = await User.findOne(toFind);
     if (!user) {
-        return res.status(400).json({
-            message: "User doesn't exist",
+        return res.status(200).json({
+            status: 400,
+            message: "User doesn't Exist",
         });
     }
 
@@ -92,7 +110,8 @@ const loginUser = asyncHandler(async (req, res) => {
             },
         });
     } else {
-        return res.status(400).json({
+        return res.status(200).json({
+            status: 400,
             message: "wrong password",
         });
     }

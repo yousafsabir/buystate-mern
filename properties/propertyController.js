@@ -5,32 +5,14 @@ const getProperties = asyncHandler(async (req, res) => {
     let { find, sort, page, limit } = req.body;
     page = parseInt(page);
     limit = parseInt(limit);
-    let toSort;
-    if (sort === "ascending") {
-        toSort = { $natural: 1 };
-    } else if (sort === "descending") {
-        toSort = { $natural: -1 };
-    } else {
-        toSort = null;
-    }
-    // Pagination
 
-    let pagination = {
-        page,
-    };
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
+    const toSort = useSort(sort);
 
-    if (startIndex > 0) {
-        pagination.previous = page - 1;
-    }
-    if (endIndex < (await Property.find(find).count())) {
-        pagination.next = page + 1;
-    }
+    const pagination = await usePagination(page, limit, find, Property);
 
     const properties = await Property.find(find)
         .sort(toSort)
-        .skip(startIndex)
+        .skip(pagination.startIndex)
         .limit(limit);
 
     return res.status(200).json({
@@ -40,6 +22,36 @@ const getProperties = asyncHandler(async (req, res) => {
         properties,
     });
 });
+
+const getMyListings = asyncHandler(async (req, res) => {
+    let { sort, page, limit } = req.body;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const id = req.user._id;
+
+    const toSort = useSort(sort);
+
+    const pagination = await usePagination(page, limit, { _id: id }, Property);
+
+    const properties = await Property.find({ userId: id })
+        .sort(toSort)
+        .skip(pagination.startIndex)
+        .limit(limit);
+
+    if (properties.length === 0) {
+        return res.json({
+            status: 404,
+            message: "No Listings found for this user",
+        });
+    }
+    return res.json({
+        status: 200,
+        user: req.user._id,
+        pagination,
+        properties,
+    });
+});
+
 const createProperty = asyncHandler(async (req, res) => {
     const {
         title,
@@ -117,8 +129,40 @@ const deleteProperty = asyncHandler(async (req, res) => {
     });
 });
 
+// utilities
+async function usePagination(page, limit, findQuery, model) {
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    let pagination = {
+        page,
+        previous: null,
+        next: null,
+        startIndex,
+        endIndex,
+    };
+
+    if (startIndex > 0) {
+        pagination.previous = page - 1;
+    }
+    if (endIndex < (await model.find(findQuery).count())) {
+        pagination.next = page + 1;
+    }
+    return pagination;
+}
+
+function useSort(toSort) {
+    if (toSort === "ascending") {
+        return { $natural: 1 };
+    } else if (toSort === "descending") {
+        return { $natural: -1 };
+    } else {
+        return null;
+    }
+}
+
 module.exports = {
     getProperties,
+    getMyListings,
     createProperty,
     updateProperty,
     deleteProperty,

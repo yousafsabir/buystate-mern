@@ -39,7 +39,8 @@ const registerUser = asyncHandler(async (req, res) => {
         password: hashedPass,
     });
     if (user) {
-        return res.status(201).json({
+        return res.status(200).json({
+	    status: 201,
             message: "user registered successfully",
             user: {
                 _id: user.id,
@@ -98,6 +99,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (passMatch) {
         return res.status(200).json({
+	    status: 200,
             message: "user logged in",
             user: {
                 _id: user.id,

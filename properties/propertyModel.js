@@ -59,12 +59,12 @@ const propertySchema = mongoose.Schema(
         },
         imageId: {
             type: String,
-            required: [true, "please add your image"],
+            required: [true, "please add image id"],
             unique: false,
         },
         userId: {
             type: String,
-            required: [true, "please add your image"],
+            required: [true, "please add user id"],
             unique: false,
         },
     },

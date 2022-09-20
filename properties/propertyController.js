@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
+const empty = require("is-empty");
 const Property = require("./propertyModel");
+const User = require("../users/userModel");
 
 const getProperties = asyncHandler(async (req, res) => {
     let { find, sort, page, limit } = req.body;
@@ -20,6 +22,28 @@ const getProperties = asyncHandler(async (req, res) => {
         message: `successfully fetched properties`,
         pagination,
         properties,
+    });
+});
+
+const getPropertyDetail = asyncHandler(async (req, res) => {
+    let { id } = req.params;
+
+    if (empty(id)) {
+        return res.status(200).json({
+            status: 404,
+            message: `Property Id not found`,
+        });
+    }
+
+    const property = await Property.findById(id);
+
+    const user = await User.findById(property?.userId);
+
+    return res.status(200).json({
+        status: 200,
+        message: `successfully fetched property detail`,
+        property,
+        user,
     });
 });
 
@@ -162,6 +186,7 @@ function useSort(toSort) {
 
 module.exports = {
     getProperties,
+    getPropertyDetail,
     getMyListings,
     createProperty,
     updateProperty,

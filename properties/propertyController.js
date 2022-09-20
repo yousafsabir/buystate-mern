@@ -25,6 +25,9 @@ const getProperties = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Get Property Detail
+// @route   Get /api/users/propertydetail/:id
+// @access  public
 const getPropertyDetail = asyncHandler(async (req, res) => {
     let { id } = req.params;
 

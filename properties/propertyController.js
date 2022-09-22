@@ -79,6 +79,28 @@ const getMyListings = asyncHandler(async (req, res) => {
     });
 });
 
+const getFavourites = asyncHandler(async (req, res) => {
+    let { id = null } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findOne({ _id: userId }).select("favourites -_id");
+
+    if (!id) {
+        return res.status(200).json({
+            status: 200,
+            message: "fetched favourites",
+            favourites: user.favourites,
+        });
+    }
+
+    // return res.json({
+    //     status: 201,
+    //     user: req.user._id,
+    //     pagination,
+    //     properties,
+    // });
+});
+
 const createProperty = asyncHandler(async (req, res) => {
     const {
         title,
@@ -191,6 +213,7 @@ module.exports = {
     getProperties,
     getPropertyDetail,
     getMyListings,
+    getFavourites,
     createProperty,
     updateProperty,
     deleteProperty,

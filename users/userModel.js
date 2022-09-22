@@ -29,6 +29,10 @@ const userSchema = mongoose.Schema(
             type: String,
             required: [true, "please add your password"],
         },
+        favourites: {
+            type: Array,
+            required: [false, "not required by default"],
+        },
     },
     {
         timestamps: true,

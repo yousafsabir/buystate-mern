@@ -79,26 +79,47 @@ const getMyListings = asyncHandler(async (req, res) => {
     });
 });
 
+// multi function api
 const getFavourites = asyncHandler(async (req, res) => {
-    let { id = null } = req.body;
+    let { propertyId = null } = req.body;
     const userId = req.user._id;
 
-    const user = await User.findOne({ _id: userId }).select("favourites -_id");
+    const user = await User.findById(userId).select("favourites -_id");
+    let favourites = user.favourites;
 
-    if (!id) {
+    // Returns if no id provided
+    if (!propertyId) {
         return res.status(200).json({
             status: 200,
             message: "fetched favourites",
-            favourites: user.favourites,
+            favourites,
         });
     }
 
-    // return res.json({
-    //     status: 201,
-    //     user: req.user._id,
-    //     pagination,
-    //     properties,
-    // });
+    if (!favourites.includes(propertyId)) {
+        // To add
+        favourites.push(propertyId);
+        await User.findByIdAndUpdate(userId, {
+            $push: { favourites: propertyId },
+        });
+        return res.status(200).json({
+            status: 200,
+            message: "Property added to Favourites",
+            favourites,
+        });
+    } else {
+        // To Remove
+        let index = favourites.indexOf(propertyId);
+        favourites.splice(index, 1);
+        await User.findByIdAndUpdate(userId, {
+            $pull: { favourites: propertyId },
+        });
+        return res.status(200).json({
+            status: 200,
+            message: "Property removed from Favourites",
+            favourites,
+        });
+    }
 });
 const getFavouriteProperties = asyncHandler(async (req, res) => {
     let { sort, page, limit } = req.body;

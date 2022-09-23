@@ -6,6 +6,7 @@ const {
     getPropertyDetail,
     getMyListings,
     getFavourites,
+    getFavouriteProperties,
     createProperty,
     updateProperty,
     deleteProperty,
@@ -15,6 +16,7 @@ router.route("/get").post(getProperties);
 router.route("/propertydetail/:id").post(getPropertyDetail);
 router.route("/mylistings").post(protect, getMyListings);
 router.route("/favourites").post(protect, getFavourites);
+router.route("/favouriteproperties").post(protect, getFavouriteProperties);
 router.route("/create").post(protect, createProperty);
 router
     .route("/:id")

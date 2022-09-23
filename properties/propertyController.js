@@ -100,6 +100,62 @@ const getFavourites = asyncHandler(async (req, res) => {
     //     properties,
     // });
 });
+const getFavouriteProperties = asyncHandler(async (req, res) => {
+    let { sort, page, limit } = req.body;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const userId = req.user._id;
+
+    const doc = await User.findById(userId).select("favourites -_id");
+    const list = doc.favourites;
+
+    if (list.length === 0) {
+        return res.status(200).json({
+            status: 404,
+            message: "You Don't have any favourites",
+        });
+    }
+
+    // Sorting the properties
+    if (sort === "ascending") {
+        list.reverse();
+    }
+
+    // Custom Pagination for this api
+    let pagination = {
+        page,
+        previous: null,
+        next: null,
+    };
+
+    const startIndex = (page - 1) * limit;
+    if (startIndex > 0) {
+        pagination.previous = page - 1;
+    }
+
+    let endIndex = page * limit;
+    if (endIndex > list.length - 1) {
+        endIndex = list.length - 1;
+    } else if (endIndex < list.length) {
+        pagination.next = page + 1;
+    }
+
+    // initializing properties array
+    let properties = [];
+
+    // fetching properties according to pagination
+    for (let i = startIndex; i <= endIndex; i++) {
+        let property = await Property.findById(list[i]);
+        properties.push(property);
+    }
+
+    return res.status(200).json({
+        status: 200,
+        message: "fetched favourite properties",
+        properties,
+        pagination,
+    });
+});
 
 const createProperty = asyncHandler(async (req, res) => {
     const {
@@ -214,6 +270,7 @@ module.exports = {
     getPropertyDetail,
     getMyListings,
     getFavourites,
+    getFavouriteProperties,
     createProperty,
     updateProperty,
     deleteProperty,

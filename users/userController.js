@@ -9,7 +9,8 @@ const empty = require("is-empty");
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
     // destructuring
-    const { fName, lName, userName, phone, email, password } = req.body;
+    const { fName, lName, userName, phone, email, password, image, imageId } =
+        req.body;
     // Check if we have all the values
     if (!fName || !lName || !userName || !phone || !email || !password) {
         return res.status(400).json({
@@ -33,6 +34,8 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         fName,
         lName,
+        image,
+        imageId,
         userName,
         phone,
         email,
@@ -40,10 +43,12 @@ const registerUser = asyncHandler(async (req, res) => {
     });
     if (user) {
         return res.status(200).json({
-	    status: 201,
+            status: 201,
             message: "user registered successfully",
             user: {
                 _id: user.id,
+                image: user.image,
+                imageId: user.imageId,
                 fName: user.fName,
                 lName: user.lName,
                 userName: user.userName,
@@ -87,7 +92,9 @@ const loginUser = asyncHandler(async (req, res) => {
         };
     }
 
-    const user = await User.findOne(toFind);
+    const user = await User.findOne(toFind).select(
+        "-favourites -createdAt -updatedAt"
+    );
     if (!user) {
         return res.status(200).json({
             status: 400,
@@ -99,10 +106,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (passMatch) {
         return res.status(200).json({
-	    status: 200,
+            status: 200,
             message: "user logged in",
             user: {
                 _id: user.id,
+                image: user.image,
+                imageId: user.imageId,
                 fName: user.fName,
                 lName: user.lName,
                 userName: user.userName,

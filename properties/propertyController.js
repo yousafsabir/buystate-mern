@@ -177,7 +177,6 @@ const getFavouriteProperties = asyncHandler(async (req, res) => {
         pagination,
     });
 });
-
 const createProperty = asyncHandler(async (req, res) => {
     const {
         title,
@@ -240,6 +239,77 @@ const updateProperty = asyncHandler(async (req, res) => {
         updatedOne,
     });
 });
+const setSuspend = asyncHandler(async (req, res) => {
+    let { propertyId = null } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId).select("suspends -_id");
+    let suspends = user.suspends;
+
+    // Returns if no id provided
+    if (!propertyId) {
+        return res.status(200).json({
+            status: 200,
+            message: "fetched suspends",
+            suspends,
+        });
+    }
+
+    if (!suspends.includes(propertyId)) {
+        // To add
+        suspends.push(propertyId);
+        await User.findByIdAndUpdate(userId, {
+            $push: { suspends: propertyId },
+        });
+        return res.status(200).json({
+            status: 200,
+            message: "Property suspended",
+            suspends,
+        });
+    } else {
+        // To Remove
+        let index = suspends.indexOf(propertyId);
+        suspends.splice(index, 1);
+        await User.findByIdAndUpdate(userId, {
+            $pull: { suspends: propertyId },
+        });
+        return res.status(200).json({
+            status: 200,
+            message: "Property resumed",
+            suspends,
+        });
+    }
+});
+const suspendOrResumeProperty = asyncHandler(async (req, res) => {
+    const { propertyId } = req.body;
+    if (!propertyId) {
+        return res.status(200).json({
+            status: 400,
+            message: "id not found",
+        });
+    }
+    const doc = await Property.findById(propertyId).select("title suspended");
+
+    let suspendedOne;
+    let resumed = false;
+
+    if (doc.suspended) {
+        suspendedOne = await Property.findByIdAndUpdate(propertyId, {
+            $set: { suspended: false },
+        }).select("title suspended");
+    } else {
+        suspendedOne = await Property.findByIdAndUpdate(propertyId, {
+            $set: { suspended: true },
+        }).select("title suspended");
+        resumed = true;
+    }
+
+    return res.json({
+        message: `Property ${resumed ? "resumed" : "suspended"}`,
+        status: 200,
+        property: suspendedOne,
+    });
+});
 const deleteProperty = asyncHandler(async (req, res) => {
     const id = req.params.id;
     if (!id) {
@@ -294,5 +364,7 @@ module.exports = {
     getFavouriteProperties,
     createProperty,
     updateProperty,
+    suspendOrResumeProperty,
+    setSuspend,
     deleteProperty,
 };

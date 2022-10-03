@@ -9,6 +9,8 @@ const {
     getFavouriteProperties,
     createProperty,
     updateProperty,
+    suspendOrResumeProperty,
+    setSuspend,
     deleteProperty,
 } = require("./propertyController");
 
@@ -18,6 +20,8 @@ router.route("/mylistings").post(protect, getMyListings);
 router.route("/favourites").post(protect, getFavourites);
 router.route("/favouriteproperties").post(protect, getFavouriteProperties);
 router.route("/create").post(protect, createProperty);
+// router.route("/suspendorresume").post(protect, suspendOrResumeProperty);
+router.route("/suspendorresume").post(protect, setSuspend);
 router
     .route("/:id")
     .put(protect, updateProperty)

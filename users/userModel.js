@@ -40,6 +40,12 @@ const userSchema = mongoose.Schema(
         favourites: {
             type: Array,
             required: [false, "not required by default"],
+            default: [],
+        },
+        suspends: {
+            type: Array,
+            required: [false, "not required by default"],
+            default: [],
         },
     },
     {

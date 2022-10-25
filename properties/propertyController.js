@@ -280,48 +280,18 @@ const setSuspend = asyncHandler(async (req, res) => {
         });
     }
 });
-const suspendOrResumeProperty = asyncHandler(async (req, res) => {
-    const { propertyId } = req.body;
-    if (!propertyId) {
+const deleteProperty = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
         return res.status(200).json({
             status: 400,
             message: "id not found",
         });
     }
-    const doc = await Property.findById(propertyId).select("title suspended");
-
-    let suspendedOne;
-    let resumed = false;
-
-    if (doc.suspended) {
-        suspendedOne = await Property.findByIdAndUpdate(propertyId, {
-            $set: { suspended: false },
-        }).select("title suspended");
-    } else {
-        suspendedOne = await Property.findByIdAndUpdate(propertyId, {
-            $set: { suspended: true },
-        }).select("title suspended");
-        resumed = true;
-    }
-
-    return res.json({
-        message: `Property ${resumed ? "resumed" : "suspended"}`,
-        status: 200,
-        property: suspendedOne,
-    });
-});
-const deleteProperty = asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    if (!id) {
-        return res.status(400).json({
-            message: "id not found",
-        });
-    }
     const deletedOne = await Property.findByIdAndDelete(id);
-    return res.json({
-        message: "successfully deleted",
+    return res.status(200).json({
         status: 200,
-        deletedOne,
+        message: "property successfully removed",
     });
 });
 
@@ -364,7 +334,6 @@ module.exports = {
     getFavouriteProperties,
     createProperty,
     updateProperty,
-    suspendOrResumeProperty,
     setSuspend,
     deleteProperty,
 };

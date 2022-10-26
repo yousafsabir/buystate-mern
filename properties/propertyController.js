@@ -226,13 +226,18 @@ const createProperty = asyncHandler(async (req, res) => {
 const updateProperty = asyncHandler(async (req, res) => {
     const id = req.params.id;
     if (!id) {
-        return res.status(400).json({
+        return res.status(200).json({
+            status: 400,
             message: "id not found",
         });
     }
-    const updatedOne = await Property.findByIdAndUpdate(id, req.body, {
-        new: true,
-    });
+    const updatedOne = await Property.findByIdAndUpdate(
+        id,
+        { $set: { ...req.body } },
+        {
+            new: true,
+        }
+    );
     return res.json({
         status: 200,
         message: "successfully updated",

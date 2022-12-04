@@ -12,6 +12,16 @@ const propertySchema = mongoose.Schema(
             required: [true, "please add location"],
             unique: false,
         },
+        city: {
+            type: String,
+            required: [true, "please add city"],
+            unique: false,
+        },
+        state: {
+            type: String,
+            required: [true, "please add state"],
+            unique: false,
+        },
         description: {
             type: String,
             required: [true, "please add description"],
@@ -65,6 +75,12 @@ const propertySchema = mongoose.Schema(
         userId: {
             type: String,
             required: [true, "please add user id"],
+            unique: false,
+        },
+        userId: {
+            type: Boolean,
+            required: [false, "please add user id"],
+            default: false,
             unique: false,
         },
     },

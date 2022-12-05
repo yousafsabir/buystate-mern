@@ -77,7 +77,7 @@ const propertySchema = mongoose.Schema(
             required: [true, "please add user id"],
             unique: false,
         },
-        userId: {
+        suspended: {
             type: Boolean,
             required: [false, "please add user id"],
             default: false,

@@ -12,7 +12,10 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: process.env.APP_URL,
+}
+app.use(cors(corsOptions));
 
 // To parse req.body
 app.use(express.json());

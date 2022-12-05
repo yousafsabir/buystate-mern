@@ -13,7 +13,9 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-    origin: process.env.APP_URL,
+    // origin: process.env.APP_URL,
+    origin: true,
+    credentials: true,
 }
 app.use(cors(corsOptions));
 
